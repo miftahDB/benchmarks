@@ -1,0 +1,14 @@
+{
+  "name": "benchmarks-miftahdb",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "benchmark": "^2.1.4",
+    "miftahdb": "^1.1.2"
+  }
+}
