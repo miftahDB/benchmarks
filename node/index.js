@@ -1,6 +1,4 @@
 const MiftahDB = require("miftahdb");
-const { performance } = require("perf_hooks");
-const process = require("process");
 
 const queryCount = 100000; // Number of queries to benchmark
 
@@ -15,7 +13,7 @@ function formatTime(ms) {
   return (ms / 1000).toFixed(2);
 }
 
-async function benchmark(db, operation, keys, action) {
+function benchmark(db, operation, keys, action) {
   console.log(`\n* Benchmark ${operation}`);
 
   let totalLatency = 0;
@@ -23,38 +21,37 @@ async function benchmark(db, operation, keys, action) {
 
   for (const key of keys) {
     const latencyStart = performance.now();
-    await action(db, key);
+    action(db, key);
     totalLatency += performance.now() - latencyStart;
   }
 
   const duration = performance.now() - start;
   console.log(`${queryCount} queries took: ${formatTime(duration)} seconds`);
-  console.log(`QPS: ${Math.floor(queryCount / (duration / 1000))}`);
   console.log(
     `Average latency: ${(totalLatency / queryCount).toFixed(4)} milliseconds`
   );
 }
 
-async function main() {
+function main() {
   console.log(`Starting benchmark with ${queryCount} queries...`);
   const db = new MiftahDB("benchmark.db");
 
   const keys = Array.from({ length: queryCount }, () => randomString(10));
   const keyPairs = keys.map((key) => [key, randomString(50)]);
 
-  await benchmark(db, "set", keyPairs, (db, [key, value]) =>
-    db.set(key, value)
-  );
-  await benchmark(db, "get", keys, (db, key) => db.get(key));
-  await benchmark(db, "exists", keys, (db, key) => db.exists(key));
-  await benchmark(db, "delete", keys, (db, key) => db.delete(key));
-  await benchmark(db, "rename", keyPairs, (db, [oldKey, newKey]) =>
+  benchmark(db, "set", keyPairs, (db, [key, value]) => db.set(key, value));
+  benchmark(db, "get", keys, (db, key) => db.get(key));
+  benchmark(db, "exists", keys, (db, key) => db.exists(key));
+  benchmark(db, "delete", keys, (db, key) => db.delete(key));
+
+  const renamePairs = keys.map((key) => [key, randomString(10)]);
+  benchmark(db, "rename", renamePairs, (db, [oldKey, newKey]) =>
     db.rename(oldKey, newKey)
   );
-  await benchmark(db, "getExpire", keys, (db, key) => db.getExpire(key));
 }
 
-main().catch((err) => {
+try {
+  main();
+} catch (err) {
   console.error("An error occurred:", err);
-  process.exit(1);
-});
+}
