@@ -51,7 +51,7 @@ async function main() {
   await benchmark(db, "rename", keyPairs, (db, [oldKey, newKey]) =>
     db.rename(oldKey, newKey)
   );
-  await benchmark(db, "expireAt", keys, (db, key) => db.expireAt(key));
+  await benchmark(db, "getExpire", keys, (db, key) => db.getExpire(key));
 }
 
 main().catch((err) => {
