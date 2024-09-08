@@ -1,4 +1,4 @@
-const MiftahDB = require("miftahdb");
+import { MiftahDB } from "miftahdb";
 
 const queryCount = 100000; // Number of queries to benchmark
 
@@ -39,15 +39,20 @@ function main() {
   const keys = Array.from({ length: queryCount }, () => randomString(10));
   const keyPairs = keys.map((key) => [key, randomString(50)]);
 
-  benchmark(db, "set", keyPairs, (db, [key, value]) => db.set(key, value));
-  benchmark(db, "get", keys, (db, key) => db.get(key));
-  benchmark(db, "exists", keys, (db, key) => db.exists(key));
+  benchmark(db, "Set", keyPairs, (db, [key, value]) => db.set(key, value));
+  benchmark(db, "Set Expire", keys, (db, key) =>
+    db.setExpire(key, new Date("2025-01-12"))
+  );
+
+  benchmark(db, "Exists", keys, (db, key) => db.exists(key));
+
+  benchmark(db, "Get", keys, (db, key) => db.get(key));
+  benchmark(db, "Get Expire", keys, (db, key) => db.getExpire(key));
+
   benchmark(db, "delete", keys, (db, key) => db.delete(key));
 
-  const renamePairs = keys.map((key) => [key, randomString(10)]);
-  benchmark(db, "rename", renamePairs, (db, [oldKey, newKey]) =>
-    db.rename(oldKey, newKey)
-  );
+  db.cleanup();
+  db.close();
 }
 
 try {
