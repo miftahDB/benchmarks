@@ -1,8 +1,0 @@
-{
-  "tasks": {
-    "test": "deno run --reload=https://deno.land/x/miftahdb/mod.ts -A --unstable-ffi main.js"
-  },
-  "imports": {
-    "@std/assert": "jsr:@std/assert@1"
-  }
-}
