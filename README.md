@@ -14,12 +14,16 @@ MiftahDB is a fast and lightweight key-value database library for Node.js and De
 
 ## Node
 
-```bash
+```
+cd node
+npm install
 npm run test
 ```
 
-## Deno
+## Bun
 
-```bash
-deno task test
+```
+cd bun
+bun install
+bun run test
 ```
