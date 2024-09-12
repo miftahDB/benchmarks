@@ -3,13 +3,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "node index.js"
+    "test-bun": "bun run bun/index.js",
+    "test-node": "node node/index.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "benchmark": "^2.1.4",
     "miftahdb": "latest"
   }
 }

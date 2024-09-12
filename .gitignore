@@ -24,3 +24,5 @@ dev-dist
 *.sln
 *.sw?
 *.db
+*.db-shm
+*.db-wal

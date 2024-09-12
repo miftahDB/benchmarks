@@ -1,6 +1,6 @@
 # MiftahDB Benchmarks
 
-MiftahDB is a fast and lightweight key-value database library for Node.js and Deno.
+MiftahDB is a fast and lightweight key-value database library for Node.js and Bun.
 
 ## Features
 
@@ -15,15 +15,11 @@ MiftahDB is a fast and lightweight key-value database library for Node.js and De
 ## Node
 
 ```
-cd node
-npm install
-npm run test
+npm run test-node
 ```
 
 ## Bun
 
 ```
-cd bun
-bun install
-bun run test
+bun run test-bun
 ```
