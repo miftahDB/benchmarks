@@ -4,9 +4,11 @@
   "type": "module",
   "scripts": {
     "test-bun": "bun run bun/index.js",
-    "test-node": "node node/index.js"
+    "test-node": "node node/index.js",
+    "test-redis": "node redis/index.js"
   },
   "dependencies": {
-    "miftahdb": "latest"
+    "miftahdb": "latest",
+    "redis": "^4.7.0"
   }
 }
