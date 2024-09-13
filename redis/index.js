@@ -7,7 +7,7 @@ const VALUE_LENGTH = 50; // Length of the value
 
 function randomString(length) {
   return Array.from({ length }, () =>
-    String.fromCharCode(65 + Math.floor(Math.random() * 26)),
+    String.fromCharCode(65 + Math.floor(Math.random() * 26))
   ).join("");
 }
 
@@ -39,10 +39,10 @@ export default async function benchmark(db, runtime, type) {
   console.log("Wait for all benchmarks to complete to print the table.");
 
   const keys = Array.from({ length: QUERY_COUNT }, () =>
-    randomString(KEY_LENGTH),
+    randomString(KEY_LENGTH)
   );
   const values = Array.from({ length: QUERY_COUNT }, () =>
-    randomString(VALUE_LENGTH),
+    randomString(VALUE_LENGTH)
   );
   const keyValuePairs = keys.map((key, index) => ({
     key,
@@ -60,6 +60,17 @@ export default async function benchmark(db, runtime, type) {
       data: keyValuePairs,
     },
     {
+      name: "Multi Set",
+      action: async (db, data) => {
+        const pipeline = db.multi();
+        for (const { key, value } of data) {
+          pipeline.set(key, value);
+        }
+        await pipeline.exec();
+      },
+      data: keyValuePairs,
+    },
+    {
       name: "Get",
       action: async (db, data) => {
         for (const key of data) {
@@ -68,32 +79,49 @@ export default async function benchmark(db, runtime, type) {
       },
       data: keys,
     },
+    {
+      name: "Multi Get",
+      action: async (db, data) => {
+        const pipeline = db.multi();
+        for (const key of data) {
+          pipeline.get(key);
+        }
+        await pipeline.exec();
+      },
+      data: keys,
+    },
   ];
 
   const results = [];
   for (const benchmark of benchmarks) {
-    const result = await runBenchmark(
-      db,
-      benchmark.name,
-      benchmark.action,
-      benchmark.data,
-    );
-    results.push(result);
+    try {
+      const result = await runBenchmark(
+        db,
+        benchmark.name,
+        benchmark.action,
+        benchmark.data
+      );
+      results.push(result);
+    } catch (error) {
+      console.error(`Error during benchmark: ${error}`);
+    }
   }
 
   console.log(
-    `\n${QUERY_COUNT} Queries Benchmark Summary ( ${runtime} ), ( ${type} ):`,
+    `\n${QUERY_COUNT} Queries Benchmark Summary ( ${runtime} ), ( ${type} ):`
   );
   console.table(results);
 
   console.log("\nBenchmark completed.");
 }
 
-
 async function run() {
-  const db = await createClient().connect()
+  const db = createClient(); // Create Redis client
+  await db.connect(); // Connect to Redis
+
   await benchmark(db, "Node.js", "redis");
-  await db.disconnect()
+
+  await db.disconnect(); // Disconnect from Redis after benchmark
 }
 
-run()
+run();
