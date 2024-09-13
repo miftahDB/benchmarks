@@ -90,11 +90,10 @@ export default async function benchmark(db, runtime, type) {
 }
 
 
-function run() {
-  const db = createClient();
-  db.connect();
-  benchmark(db, "Node.js", "redis");
-  db.disconnect();
+async function run() {
+  const db = await createClient().connect()
+  await benchmark(db, "Node.js", "redis");
+  await db.disconnect()
 }
 
 run()
